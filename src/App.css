@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 100zh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,6 +26,68 @@
 
 .App-link {
   color: #61dafb;
+}
+
+img {
+  align: center;
+  vertical-align: middle;
+}
+.box { display: inline-block; width:75px; }
+
+
+h1 {
+  color: black;
+  height: 80px;
+  padding-top:0px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+h2 {
+  text-align: left;
+  padding: 10px;
+  padding-left: 20;
+}
+
+h3 {
+  font-size: small;
+  padding: 10px;
+}
+
+
+#workpatterns {
+  text-align: center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-radius: 3px;
+  width: 100%;
+}
+
+#workpatterns th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 3px;
+  font-size: large;
+}
+
+#workpatterns td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 3px;
+}
+
+#workpatterns tr:nth-child(even){background-color: #f2f2f2;}
+
+#workpatterns tr:hover {background-color: #E4E6F8;}
+
+#workpatterns th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #1C17C6;
+  color: white;
+  border: 2px solid #B100B1;
+  border-radius: 3px;
 }
 
 @keyframes App-logo-spin {
