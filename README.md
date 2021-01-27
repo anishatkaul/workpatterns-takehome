@@ -1,5 +1,5 @@
 ## Take home quiz for WorkPatterns
- Anisha Kaul
+ Anisha Kaul \
  January 26, 2021
  
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
