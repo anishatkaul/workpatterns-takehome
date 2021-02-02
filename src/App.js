@@ -218,9 +218,16 @@ class App extends Component {
       return a["time"] - b["time"];
     });
 
-    // Gather relevant months, years to be used as columns
+    
+    const emailDict = {};
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     for (let i=0; i<emails.length; i++){
+      // Convert email data to single object where properties are message ids, values are the original email data 
+      // Enables faster lookups by message ID
+      let messageId = emails[i]["message-id"];
+      emailDict[messageId] = emails[i];
+
+      // Gather relevant months, years to be used as columns
       const date = new Date((emails[i]["time"]*1000));
       const month = months[date.getMonth()];
       const year = date.getFullYear();
@@ -230,13 +237,6 @@ class App extends Component {
       }
     }
 
-    // Convert email data to single object where properties are message ids, values are the original email data 
-    // Enables faster lookups by message ID
-    const emailDict = {};
-    for (let i=0; i<emails.length; i++) {
-      let messageId = emails[i]["message-id"];
-      emailDict[messageId] = emails[i];
-    }
 
     // Track sent/received emails by organization
     for (let i=0; i<emails.length; i++) {
