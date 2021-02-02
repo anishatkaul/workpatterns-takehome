@@ -145,7 +145,6 @@ class App extends Component {
    *  values: {"sent": [Array of message id's], "received":[Array of message id's]}
    */
   drawNoResponseTable(avgResponseTimes, emailList){
-    console.log("in draw no response table")
     return (
       <Table striped bordered hover id="workpatterns">
         <thead>
@@ -195,7 +194,7 @@ class App extends Component {
       }
     }
     //Clean data of repetition caused by cc'ing internal addresses on outgoing emails
-    if (receivers.length > 1) {
+    if (receivers.length > 1 && receivers.includes(sender)) {
       const senderIndex = receivers.indexOf(sender);
       receivers.splice(senderIndex, 1);
     }
@@ -213,7 +212,6 @@ class App extends Component {
 
     //Initialize list of months, to be used for creating table columns
     let columns = [];
-    console.log(emails.length)
 
     // Sort emails by date
     emails.sort(function (a,b) {
@@ -232,22 +230,19 @@ class App extends Component {
       }
     }
 
-    // Convert email data to single dictionary where keys are message ids, values are the original email data 
+    // Convert email data to single object where properties are message ids, values are the original email data 
     // Enables faster lookups by message ID
-    let emailDict = {};
+    const emailDict = {};
     for (let i=0; i<emails.length; i++) {
       let messageId = emails[i]["message-id"];
       emailDict[messageId] = emails[i];
     }
 
+    // Track sent/received emails by organization
     for (let i=0; i<emails.length; i++) {
       const entry = emails[i];
       const messageId = entry["message-id"];
       let [sender, receivers] = this.getOrgsFromEntry(entry["addresses"])
-
-      if (sender !== "workpatterns" && ! (receivers.includes("workpatterns"))) {
-        continue
-      }
 
       //Handle sender
       if (sender in orgs) {
@@ -260,10 +255,12 @@ class App extends Component {
       //Handle recivers
       for (let receiver of receivers) {
         if (receiver in orgs) {
-          orgs[receiver]["received"].push(entry);
+          orgs[receiver]["received"].push(messageId);
+          
+          
         }
         else {
-          orgs[receiver] = {"sent":[], "received":[entry]};
+          orgs[receiver] = {"sent":[], "received":[messageId]};
         }
       }
     }
@@ -272,22 +269,16 @@ class App extends Component {
     let avgResponseTimes = {};
 
     //Loop through organizations
-    var debug;
     for (let org in orgs) {
-      if (org === "workpatterns"){
-        debug = true;
-      }
-      else{
-        debug = false;
-      }
       const emailsSent = orgs[org]["sent"];
 
       //Initalize vars to calcluate response time averages
       let responseTimeSum = 0;
       let count = 0;
       let colIndex = 0;
-      let currMonth = 6;
-      let currYear = 2018;
+      const startDate = new Date((emails[0]["time"]*1000));
+      let currMonth = startDate.getMonth();
+      let currYear = startDate.getFullYear();
       var monthlyAvgs = new Array(columns.length).fill(null);
 
       
@@ -312,14 +303,11 @@ class App extends Component {
             responseTimeSum = 0;
             currMonth = prevDate.getMonth();
             currYear = prevDate.getFullYear()
-            if (currMonth <6){
-              colIndex = currMonth + 6
+            if (currMonth <startDate.getMonth()){
+              colIndex = currMonth + startDate.getMonth()
             }
             else {
-              colIndex = currMonth - 6;
-            }
-            if (debug){
-              console.log("i have an email from ", prevDate)
+              colIndex = currMonth - startDate.getMonth();
             }
           }
           //Get reply time in number of hours
@@ -334,9 +322,7 @@ class App extends Component {
       if (count > 0) {
         monthlyAvgs[colIndex] = responseTimeSum/count;
       }
-      if (debug){
-        console.log("step 5 loop for all, array len is ", monthlyAvgs.length)
-      }
+
       // Add our array of months averages to the overall object tracking the organization's response times
       avgResponseTimes[org] = monthlyAvgs;
     }
